@@ -177,7 +177,7 @@ export default function ContactPage() {
                       <Mail className="w-5 h-5 text-[#AEE9EC] mt-1" />
                       <div>
                         <p className="font-medium text-gray-900">Email</p>
-                        <p className="text-gray-600">info@eif.am</p>
+                        <p className="text-gray-600">wave@eif.am</p>
                       </div>
                     </div>
                     <div className="flex items-start space-x-3">

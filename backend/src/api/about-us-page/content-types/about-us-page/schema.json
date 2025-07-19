@@ -17,33 +17,95 @@
   "attributes": {
     "title": {
       "type": "string",
-      "required": true
-    },
-    "content": {
-      "type": "richtext"
-    },
-    "image": {
-      "type": "media",
       "pluginOptions": {
         "i18n": {
           "localized": true
         }
       },
-      "multiple": false,
-      "allowedTypes": [
-        "images"
-      ]
+      "required": true
     },
-    "our_vision_title": {
-      "type": "string",
+    "content": {
+      "type": "richtext",
       "pluginOptions": {
         "i18n": {
           "localized": true
         }
       }
     },
-    "our_vision_description": {
-      "type": "string",
+    "eif_information": {
+      "type": "richtext",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "our_mission": {
+      "type": "richtext",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "excellence": {
+      "type": "richtext",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "community": {
+      "type": "richtext",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "inpackt": {
+      "type": "richtext",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "our_approach": {
+      "type": "richtext",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "accessible_learning": {
+      "type": "richtext",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "practical_Application": {
+      "type": "richtext",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "our_vision": {
+      "type": "richtext",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "community_building": {
+      "type": "richtext",
       "pluginOptions": {
         "i18n": {
           "localized": true

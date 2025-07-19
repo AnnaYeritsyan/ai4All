@@ -11,19 +11,27 @@ import { useLocale } from "@/app/api/hooks/useLocale"
 import { usePathname } from "next/navigation"
 import Image from "next/image"
 import logo from '@/public/ai4All_logo.png'
+import { useHeader } from "@/app/api/content/useHeader";
 
 
 export function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const locale = useLocale();
   const pathname = usePathname()
+  const { data: headerData } = useHeader(locale);
+
+  const navSource = headerData?.locale === locale
+    ? headerData
+    : headerData?.localizations?.find((loc: any) => loc.locale === locale) || headerData;
+
   const navigation = [
-    { name: "Home", href: `/${locale}` },
-    { name: "About Us", href: `/${locale}/about` },
-    { name: "News & Media", href: `/${locale}/news` },
-    { name: "Blog", href: `/${locale}/blog` },
-    { name: "Contact", href: `/${locale}/contact` },
+    { name: navSource?.home_title || "Home", href: `/${locale}` },
+    { name: navSource?.about_us_title || "About Us", href: `/${locale}/about` },
+    { name: navSource?.news_title || "News & Media", href: `/${locale}/news` },
+    { name: navSource?.blog_title || "Blog", href: `/${locale}/blog` },
+    { name: navSource?.contact_title || "Contact", href: `/${locale}/contact` },
   ];
+  const contact = headerData?.contact || { phone: "(011) 219797", email: "wave@eif.am" };
 
   // Helper function to check if a link is active
   const isActiveLink = (href:string) => {
@@ -54,7 +62,7 @@ export function Header() {
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex space-x-8">
-            {navigation.map((item) => (
+            {navigation.map((item: { name: string; href: string }) => (
               <Link
                 key={item.name}
                 href={item.href}
@@ -73,8 +81,8 @@ export function Header() {
           <div className="hidden md:flex items-center space-x-4">
             <LocalSwitcher />
             <div className="text-sm text-gray-600">
-              <div>+374 XX XXX XXX</div>
-              <div>info@eif.am</div>
+              <div>{contact.phone}</div>
+              <div>{contact.email}</div>
             </div>
           </div>
 
@@ -90,7 +98,7 @@ export function Header() {
         {isMenuOpen && (
           <div className="md:hidden">
             <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3 border-t border-gray-100">
-              {navigation.map((item) => (
+              {navigation.map((item: { name: string; href: string }) => (
                 <Link
                   key={item.name}
                   href={item.href}
@@ -106,8 +114,8 @@ export function Header() {
               ))}
               <div className="px-3 py-2 border-t border-gray-100 mt-2">
                 <div className="text-sm text-gray-600 mb-2">
-                  <div>+374 XX XXX XXX</div>
-                  <div>info@eif.am</div>
+                  <div>{contact.phone}</div>
+                  <div>{contact.email}</div>
                 </div>
                 <LocalSwitcher />
                 <div className="flex space-x-4">

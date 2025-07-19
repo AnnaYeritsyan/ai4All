@@ -4,9 +4,38 @@ import { Facebook, Twitter, Linkedin, Instagram, Mail, Phone, MapPin } from "luc
 import { useLocale } from "@/app/api/hooks/useLocale";
 import Image from "next/image";
 import logo from '@/public/ai4All_logo.png';
+import { useFooter } from "@/app/api/content/useFooter";
+import { useHeader } from "@/app/api/content/useHeader";
 
 export function Footer() {
   const locale = useLocale();
+  const { data: footerData } = useFooter(locale);
+  const { data: headerData } = useHeader(locale);
+
+  // Use navSource from header for navigation names
+  const navSource = headerData?.locale === locale
+    ? headerData
+    : headerData?.localizations?.find((loc: any) => loc.locale === locale) || headerData;
+
+  // Use navSource from footer for other localized fields
+  const footerNavSource = footerData?.locale === locale
+    ? footerData
+    : footerData?.localizations?.find((loc: any) => loc.locale === locale) || footerData;
+
+  const description = footerNavSource?.description || "Empowering everyone with artificial intelligence skills. Creating a future where AI enhances education, business, and professional growth across Armenia and beyond.";
+  const quickLinkTitle = footerNavSource?.quick_link_title || "Quick Links";
+  const contactTitle = footerNavSource?.contact_title || "Contact Info";
+  const location = footerNavSource?.location || "Yerevan, Armenia";
+
+  const contact = footerData?.contact || { phone: "(011) 219797", email: "wave@eif.am", address: "Yerevan, Armenia" };
+
+  const quickLinks = [
+    { name: navSource?.home_title || "Home", href: `/${locale}` },
+    { name: navSource?.about_us_title || "About Us", href: `/${locale}/about` },
+    { name: navSource?.news_title || "News & Media", href: `/${locale}/news` },
+    { name: navSource?.blog_title || "Blog", href: `/${locale}/blog` },
+    { name: navSource?.contact_title || "Contact", href: `/${locale}/contact` },
+  ];
 
   return (
     <footer className="bg-[#02109D] text-white">
@@ -28,8 +57,7 @@ export function Footer() {
               </Link>
             </div>
             <p className="text-[#AEE9EC] mb-4 max-w-md">
-              Empowering everyone with artificial intelligence skills. Creating a future where AI enhances education,
-              business, and professional growth across Armenia and beyond.
+              {description}
             </p>
             <div className="flex space-x-4">
               <Link
@@ -55,51 +83,33 @@ export function Footer() {
 
           {/* Quick Links */}
           <div>
-            <h3 className="text-white font-semibold mb-4">Quick Links</h3>
+            <h3 className="text-white font-semibold mb-4">{quickLinkTitle}</h3>
             <ul className="space-y-2">
-              <li>
-                <Link href={`/${locale}`} className="text-[#AEE9EC] hover:text-[#9FFEE4] transition-colors">
-                  Home
-                </Link>
-              </li>
-              <li>
-                <Link href={`/${locale}/about`} className="text-[#AEE9EC] hover:text-[#9FFEE4] transition-colors">
-                  About Us
-                </Link>
-              </li>
-              <li>
-                <Link href={`/${locale}/news`} className="text-[#AEE9EC] hover:text-[#9FFEE4] transition-colors">
-                  News & Media
-                </Link>
-              </li>
-              <li>
-                <Link href={`/${locale}/blog`} className="text-[#AEE9EC] hover:text-[#9FFEE4] transition-colors">
-                  Blog
-                </Link>
-              </li>
-              <li>
-                <Link href={`/${locale}/contact`} className="text-[#AEE9EC] hover:text-[#9FFEE4] transition-colors">
-                  Contact
-                </Link>
-              </li>
+              {quickLinks.map((link: { name: string; href: string }) => (
+                <li key={link.name}>
+                  <Link href={link.href} className="text-[#AEE9EC] hover:text-[#9FFEE4] transition-colors">
+                    {link.name}
+                  </Link>
+                </li>
+              ))}
             </ul>
           </div>
 
           {/* Contact Info */}
           <div>
-            <h3 className="text-white font-semibold mb-4">Contact Info</h3>
+            <h3 className="text-white font-semibold mb-4">{contactTitle}</h3>
             <div className="space-y-3">
               <div className="flex items-center space-x-2">
                 <Phone className="w-4 h-4 text-[#9FFEE4]" />
-                <span className="text-[#AEE9EC]">+374 XX XXX XXX</span>
+                <span className="text-[#AEE9EC]">{contact.phone}</span>
               </div>
               <div className="flex items-center space-x-2">
                 <Mail className="w-4 h-4 text-[#9FFEE4]" />
-                <span className="text-[#AEE9EC]">info@eif.am</span>
+                <span className="text-[#AEE9EC]">{contact.email}</span>
               </div>
               <div className="flex items-start space-x-2">
                 <MapPin className="w-4 h-4 text-[#9FFEE4] mt-1" />
-                <span className="text-[#AEE9EC]">Yerevan, Armenia</span>
+                <span className="text-[#AEE9EC]">{location}</span>
               </div>
             </div>
           </div>
