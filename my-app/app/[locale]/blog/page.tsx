@@ -1,9 +1,18 @@
+'use client'
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Calendar, User, ArrowRight } from "lucide-react"
 import Link from "next/link"
+import { useBlogPage } from "@/app/api/content/useBlog";
+import { useLocale } from "@/app/api/hooks/useLocale";
+import { useNewsInfos } from "@/app/api/content/useNews";
+import { useBlogsInfos } from "@/app/api/content/useBlog";
 
 export default function BlogPage() {
+  const locale = useLocale();
+  const { data: blogPage } = useBlogPage(locale);
+  const { data: newsInfos } = useNewsInfos(locale);
+  const { data: blogsInfos } = useBlogsInfos(locale);
   const blogPosts = [
     {
       id: 1,
@@ -77,14 +86,25 @@ export default function BlogPage() {
   ]
 
   const categories = [
-    "All Posts",
-    "Education",
-    "Business",
-    "Ethics",
-    "Professional Development",
-    "Creativity",
-    "Accessibility",
+    blogPage?.all_posts_title || "All Posts",
+    blogPage?.education_title || "Education",
+    blogPage?.busines_title || "Business",
+    blogPage?.professiona_development || "Professional Development",
+
   ]
+
+  function formatDate(dateString:any) {
+    const d = new Date(dateString);
+    const day = String(d.getDate()).padStart(2, '0');
+    const month = String(d.getMonth() + 1).padStart(2, '0');
+    const year = d.getFullYear();
+    return `${day}.${month}.${year}`;
+  }
+
+  function extractFirstUrl(markdown: string): string | null {
+    const urlMatch = markdown.match(/https?:\/\/[\w\-._~:/?#[\]@!$&'()*+,;=%]+/);
+    return urlMatch ? urlMatch[0] : null;
+  }
 
   return (
     <div className="bg-white">
@@ -92,10 +112,9 @@ export default function BlogPage() {
       <section className="bg-gradient-to-r from-[#02109D] to-[#F96570] text-white py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-4xl mx-auto text-center">
-            <h1 className="text-4xl md:text-5xl font-bold mb-6">AI4ALL Blog</h1>
+            <h1 className="text-4xl md:text-5xl font-bold mb-6">{blogPage?.title || "AI4ALL Blog"}</h1>
             <p className="text-xl text-[#AEE9EC] leading-relaxed">
-              Insights, tutorials, and thought leadership on artificial intelligence education, implementation, and its
-              impact on society.
+              {blogPage?.description || "Insights, tutorials, and thought leadership on artificial intelligence education, implementation, and its impact on society."}
             </p>
           </div>
         </div>
@@ -107,81 +126,39 @@ export default function BlogPage() {
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
             {/* Main Content */}
             <div className="lg:col-span-3">
-              {/* Featured Post */}
-              {blogPosts
-                .filter((post) => post.featured)
-                .map((post) => (
-                  <Card key={post.id} className="mb-12 border-l-4 border-l-[#F96570] hover:shadow-lg transition-shadow">
-                    <CardContent className="p-8">
-                      <div className="flex items-center gap-2 mb-4">
-                        <Badge className="bg-[#F96570] text-white">Featured</Badge>
-                        <Badge variant="outline" className="border-[#02109D] text-[#02109D]">
-                          {post.category}
-                        </Badge>
-                      </div>
-                      <h2 className="text-3xl font-bold text-[#02109D] mb-4">{post.title}</h2>
-                      <p className="text-gray-600 text-lg mb-6 leading-relaxed">{post.excerpt}</p>
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center space-x-4 text-gray-500">
-                          <div className="flex items-center">
-                            <User className="w-4 h-4 mr-1" />
-                            <span className="text-sm">{post.author}</span>
-                          </div>
-                          <div className="flex items-center">
-                            <Calendar className="w-4 h-4 mr-1" />
-                            <span className="text-sm">{new Date(post.date).toLocaleDateString()}</span>
-                          </div>
-                          <span className="text-sm">{post.readTime}</span>
-                        </div>
-                        <Link
-                          href={post.url || "#"}
-                          target={post.url ? "_blank" : "_self"}
-                          rel={post.url ? "noopener noreferrer" : ""}
-                          className="text-[#02109D] hover:text-[#F96570] font-medium flex items-center"
-                        >
-                          Read Full Article <ArrowRight className="w-4 h-4 ml-1" />
-                        </Link>
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
-
               {/* Recent Posts Grid */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                {blogPosts
-                  .filter((post) => !post.featured)
-                  .map((post) => (
-                    <Card key={post.id} className="hover:shadow-lg transition-shadow">
+                {Array.isArray(blogsInfos) && blogsInfos.map((item) => {
+                  const url = extractFirstUrl(item.content);
+                  const contentWithoutUrl = url ? item.content.replace(url, "") : item.content;
+                  return (
+                    <Card key={item.documentId || item.id} className="hover:shadow-lg transition-shadow">
                       <CardContent className="p-6">
-                        <Badge variant="outline" className="border-[#AEE9EC] text-[#02109D] mb-3">
-                          {post.category}
-                        </Badge>
-                        <h3 className="text-xl font-semibold text-[#02109D] mb-3 line-clamp-2">{post.title}</h3>
-                        <p className="text-gray-600 mb-4 line-clamp-3">{post.excerpt}</p>
-                        <div className="flex items-center justify-between text-sm text-gray-500 mb-4">
-                          <div className="flex items-center">
-                            <User className="w-3 h-3 mr-1" />
-                            <span>{post.author}</span>
-                          </div>
-                          <span>{post.readTime}</span>
+                        <h3 className="text-xl font-semibold text-[#02109D] mb-3 line-clamp-2">
+                          {contentWithoutUrl.split('\n')[0].replace(/\*\*/g, "")}
+                        </h3>
+                        <p className="text-gray-600 mb-4 line-clamp-3">
+                          {contentWithoutUrl.split('\n').slice(1).join(' ').slice(0, 200)}...
+                        </p>
+                        <div className="flex items-center text-gray-500 text-xs mb-2">
+                          <Calendar className="w-3 h-3 mr-1" />
+                          <span>{item.createdAt ? formatDate(item.createdAt) : ""}</span>
                         </div>
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center text-gray-500 text-sm">
-                            <Calendar className="w-4 h-4 mr-1" />
-                            <span>{new Date(post.date).toLocaleDateString()}</span>
-                          </div>
-                          <Link
-                            href={post.url || "#"}
-                            target={post.url ? "_blank" : "_self"}
-                            rel={post.url ? "noopener noreferrer" : ""}
-                            className="text-[#02109D] hover:text-[#F96570] font-medium flex items-center"
+                        {url && (
+                          <a
+                            href={url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center text-[#02109D] hover:text-[#F96570] font-medium underline"
                           >
-                            Read More <ArrowRight className="w-3 h-3 ml-1" />
-                          </Link>
-                        </div>
+                            Open Resource
+                            <ArrowRight className="w-4 h-4 ml-1" />
+                          </a>
+                        )}
                       </CardContent>
                     </Card>
-                  ))}
+                  );
+                })}
               </div>
             </div>
 
@@ -190,7 +167,7 @@ export default function BlogPage() {
               {/* Categories */}
               <Card className="mb-8">
                 <CardContent className="p-6">
-                  <h3 className="text-xl font-bold text-[#02109D] mb-4">Categories</h3>
+                  <h3 className="text-xl font-bold text-[#02109D] mb-4">{blogPage?.category_title || "Categories"}</h3>
                   <div className="space-y-2">
                     {categories.map((category, index) => (
                       <Link
@@ -208,46 +185,31 @@ export default function BlogPage() {
               {/* Recent Posts */}
               <Card className="mb-8">
                 <CardContent className="p-6">
-                  <h3 className="text-xl font-bold text-[#02109D] mb-4">Recent Posts</h3>
+                  <h3 className="text-xl font-bold text-[#02109D] mb-4">
+                    {locale === 'en'
+                      ? 'Recently News'
+                      : locale === 'hy'
+                        ? 'Վերջին նորությունները'
+                        : blogPage?.recent_posts_title || 'Recent Posts'}
+                  </h3>
                   <div className="space-y-4">
-                    {blogPosts.slice(0, 3).map((post) => (
-                      <div key={post.id} className="border-b border-gray-100 pb-4 last:border-b-0">
+                    {Array.isArray(newsInfos) && newsInfos.slice(0, 3).map((item) => (
+                      <div key={item.documentId || item.id} className="border-b border-gray-100 pb-4 last:border-b-0">
                         <Link
-                          href={post.url || "#"}
-                          target={post.url ? "_blank" : "_self"}
-                          rel={post.url ? "noopener noreferrer" : ""}
+                          href={`/${locale}/news/${item.documentId || item.id}`}
+                          target="_self"
                           className="block"
                         >
                           <h4 className="font-medium text-[#02109D] hover:text-[#F96570] mb-1 line-clamp-2">
-                            {post.title}
+                            {item.content.split('\n')[0].replace(/\*\*/g, "")}
                           </h4>
                           <div className="flex items-center text-gray-500 text-xs">
                             <Calendar className="w-3 h-3 mr-1" />
-                            <span>{new Date(post.date).toLocaleDateString()}</span>
+                            <span>{item.createdAt ? formatDate(item.createdAt) : ""}</span>
                           </div>
                         </Link>
                       </div>
                     ))}
-                  </div>
-                </CardContent>
-              </Card>
-
-              {/* Newsletter Signup */}
-              <Card className="bg-gradient-to-br from-[#AEE9EC] to-[#9FFEE4]">
-                <CardContent className="p-6">
-                  <h3 className="text-xl font-bold text-[#02109D] mb-3">Stay Updated</h3>
-                  <p className="text-[#02109D]/80 text-sm mb-4">
-                    Subscribe to our newsletter for the latest AI insights and updates.
-                  </p>
-                  <div className="space-y-3">
-                    <input
-                      type="email"
-                      placeholder="Your email address"
-                      className="w-full px-3 py-2 border border-[#02109D]/20 rounded-md focus:outline-none focus:ring-2 focus:ring-[#02109D]"
-                    />
-                    <button className="w-full bg-[#02109D] text-white py-2 rounded-md hover:bg-[#02109D]/90 transition-colors">
-                      Subscribe
-                    </button>
                   </div>
                 </CardContent>
               </Card>

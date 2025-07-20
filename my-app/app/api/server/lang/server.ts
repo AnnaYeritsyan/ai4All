@@ -5,7 +5,7 @@ import createIntl from './intl'
 
 const systemDefaultLocale = 'en' as AcceptLang
 const defaultLocaleCookieKey = 'default_locale'
-const accept: AcceptLang[] = ['en', 'hy', 'ru']
+const accept: AcceptLang[] = ['en', 'hy']
 
 export async function useIntl() {
   return createIntl(await getLocale())

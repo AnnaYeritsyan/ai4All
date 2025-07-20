@@ -13,4 +13,19 @@ export function useContactContent(locale: string) {
     queryKey: ["contactContent", locale],
     queryFn: () => fetchContactContent(locale),
   });
+}
+
+// New hook for contact-page
+export const fetchContactPage = async (locale: string) => {
+  const res = await fetch(`${API_URL}/contact-page?locale=${locale}`);
+  if (!res.ok) throw new Error("Failed to fetch contact page");
+  const data = await res.json();
+  return data.data;
+};
+
+export function useContactPage(locale: string) {
+  return useQuery({
+    queryKey: ["contactPage", locale],
+    queryFn: () => fetchContactPage(locale),
+  });
 } 

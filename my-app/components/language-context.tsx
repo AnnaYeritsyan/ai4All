@@ -16,7 +16,6 @@ export default function LocalSwitcher() {
   const dropdownRef = useRef<HTMLDivElement>(null);
   const locales = [
     { code: "en", label: "En",  },
-    { code: "ru", label: "Ru",},
     { code: "hy", label: "Hy", },
   ];
 

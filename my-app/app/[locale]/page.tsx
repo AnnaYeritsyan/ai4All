@@ -38,7 +38,7 @@ export default function HomePage() {
                 </p>
                 <div className="flex flex-col sm:flex-row gap-4">
                   <Button asChild size="lg" className="bg-[#9FFEE4] text-[#02109D] hover:bg-[#AEE9EC]">
-                    <Link href="/about">
+                    <Link href={`/${locale}/about`}>
                       {homeData.btn_more || 'Learn More'} <ArrowRight className="ml-2 w-4 h-4" />
                     </Link>
                   </Button>
@@ -48,7 +48,7 @@ export default function HomePage() {
                     size="lg"
                     className="border-[#AEE9EC] text-[#AEE9EC] hover:bg-[#AEE9EC] hover:text-[#02109D] bg-transparent"
                   >
-                    <Link href="/contact">{homeData.btn_start || 'Get Started'}</Link>
+                    <Link href={`/${locale}/contact`}>{homeData.btn_start || 'Get Started'}</Link>
                   </Button>
                 </div>
               </div>
@@ -82,7 +82,9 @@ export default function HomePage() {
       <section className="py-20 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold text-[#02109D] mb-4">{homeData?.our_vision_title || "Our Vision for the Future"}</h2>
+            <h2 className="text-3xl md:text-4xl font-bold text-[#02109D] mb-4">
+              {homeData?.our_vision_title || "Our Vision for the Future"}
+            </h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
               {homeData?.our_vision_decription || "We envision a present and future where artificial intelligence empowers everyone to achieve more, learn better, and compete globally."}
             </p>
