@@ -1,0 +1,27 @@
+{
+  "kind": "collectionType",
+  "collectionName": "media_infos",
+  "info": {
+    "singularName": "media-info",
+    "pluralName": "media-infos",
+    "displayName": "Media_info"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {
+    "i18n": {
+      "localized": true
+    }
+  },
+  "attributes": {
+    "content": {
+      "type": "richtext",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    }
+  }
+}

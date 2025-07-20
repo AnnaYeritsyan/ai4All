@@ -1,0 +1,27 @@
+{
+  "kind": "collectionType",
+  "collectionName": "news_infos",
+  "info": {
+    "singularName": "news-info",
+    "pluralName": "news-infos",
+    "displayName": "News_info"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {
+    "i18n": {
+      "localized": true
+    }
+  },
+  "attributes": {
+    "content": {
+      "type": "richtext",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    }
+  }
+}
